@@ -225,22 +225,6 @@ header .subtitle {
   font-size: 10px;
   font-weight: 700;
 }
-.embedded-report {
-  display: none;
-  margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-.embedded-report.active {
-  display: block;
-}
-.embedded-report iframe {
-  width: 100%;
-  height: 600px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--bg);
-}
 .report-viewer {
   display: none;
   margin-top: 16px;
@@ -405,9 +389,10 @@ footer {
 
 <script>
 var reports=["vermoth"];
-var baseUrl="https://blacklist-r.github.io/about-us/";
+var baseUrl="https://blacklist-r.github.io/about-us/r/";
+var ghBase="https://github.com/Blacklist-r/about-us/tree/main/r/";
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function render(){var c=document.getElementById("reports-container");c.innerHTML="";reports.forEach(function(r){var n=cap(r),card=document.createElement("div");card.className="report-card";card.innerHTML='<div class="report-header"><div><div class="report-name">'+n+'</div><div class="report-aliases">@'+r+'</div></div><div class="report-id">'+r+'</div></div><div class="report-desc">Click "View Full Report" to load details.</div><div class="report-actions"><button class="report-btn btn-view" onclick="loadReport(''+r+'')">View Full Report</button></div><div class="report-sources"><div class="source-label">Sources</div><div class="source-links"><a href="https://github.com/Blacklist-r/'+r+'" class="source-link"><span class="source-icon">GH</span>GitHub</a></div></div><div class="report-viewer" id="viewer-'+r+'"><div class="report-viewer-header"><div class="report-viewer-title">'+n+' Report</div><button class="report-viewer-close" onclick="closeReport(''+r+'')">Close</button></div><div class="report-viewer-content" id="content-'+r+'">Loading...</div></div></div>';c.appendChild(card)})}
+function render(){var c=document.getElementById("reports-container");c.innerHTML="";reports.forEach(function(r){var n=cap(r),card=document.createElement("div");card.className="report-card";card.innerHTML='<div class="report-header"><div><div class="report-name">'+n+'</div><div class="report-aliases">@'+r+'</div></div><div class="report-id">'+r+'</div></div><div class="report-desc">Click "View Full Report" to load details.</div><div class="report-actions"><button class="report-btn btn-view" onclick="loadReport(''+r+'')">View Full Report</button></div><div class="report-sources"><div class="source-label">Sources</div><div class="source-links"><a href="'+ghBase+r+'" class="source-link"><span class="source-icon">GH</span>GitHub</a></div></div><div class="report-viewer" id="viewer-'+r+'"><div class="report-viewer-header"><div class="report-viewer-title">'+n+' Report</div><button class="report-viewer-close" onclick="closeReport(''+r+'')">Close</button></div><div class="report-viewer-content" id="content-'+r+'">Loading...</div></div></div>';c.appendChild(card)})}
 function loadReport(id){var viewer=document.getElementById("viewer-"+id),content=document.getElementById("content-"+id);viewer.classList.add("active");content.innerHTML="Loading...";fetch(baseUrl+id+".html").then(function(r){return r.text()}).then(function(html){var parser=new DOMParser(),doc=parser.parseFromString(html,"text/html"),body=doc.body.innerHTML;content.innerHTML=body;history.pushState({report:id},"","/about-us/r/"+id)}).catch(function(e){content.innerHTML="<p>Failed to load report.</p>"})}
 function closeReport(id){document.getElementById("viewer-"+id).classList.remove("active");history.pushState({},"","/about-us/")}
 window.addEventListener("popstate",function(e){if(e.state&&e.state.report){loadReport(e.state.report)}else{reports.forEach(function(r){document.getElementById("viewer-"+r).classList.remove("active")})}});
