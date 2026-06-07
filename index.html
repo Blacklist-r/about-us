@@ -361,64 +361,18 @@ footer {
 }
 
 #report-view-inner {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 32px 20px 64px;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 
-#report-view-body {
-  color: #aaa;
-  font-size: 14px;
-  line-height: 1.7;
+#report-iframe {
+  width: 100%;
+  height: calc(100vh - 54px);
+  border: none;
 }
 
-#report-view-body * {
-  max-width: 100%;
-}
 
-#report-view-body .sidebar {
-  display: none !important;
-}
-
-#report-view-body .main-content {
-  margin-left: 0 !important;
-  height: auto !important;
-  max-width: 100%;
-}
-
-#report-view-body .container {
-  max-width: 100% !important;
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-#report-view-body header {
-  text-align: center;
-  padding: 0 !important;
-  margin: 0 0 24px 0 !important;
-}
-
-#report-view-body .section {
-  max-width: 100%;
-}
-
-#report-view-body .tabs-container {
-  margin-bottom: 24px;
-}
-
-#report-view-body .tabs-nav {
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-#report-view-body .tab-btn {
-  padding: 8px 12px;
-  font-size: 12px;
-}
-
-#report-view-body footer {
-  margin-top: 24px;
-}
 
 #report-view-body * {
   max-width: 100%;
@@ -500,7 +454,7 @@ footer {
 
 <div id="report-view">
   <div id="report-view-inner">
-    <div id="report-view-body"></div>
+    <iframe id="report-iframe" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
   </div>
 </div>
 
@@ -558,39 +512,10 @@ function render(keys) {
 }
 
 function loadReport(id) {
-  var body = document.getElementById("report-view-body");
-  body.innerHTML = '<div class="loading-text">Loading...</div>';
   showReportView(id);
-
-  fetch(pagesBase + id + ".html")
-    .then(function(r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.text();
-    })
-    .then(function(html) {
-      var parser = new DOMParser();
-      var doc = parser.parseFromString(html, "text/html");
-
-      var styleEl = document.getElementById("injected-report-styles");
-      if (styleEl) styleEl.remove();
-      
-      var combined = "";
-      doc.querySelectorAll("style").forEach(function(s) {
-        combined += s.textContent + "\n";
-      });
-      
-      if (combined) {
-        var tag = document.createElement("style");
-        tag.id = "injected-report-styles";
-        tag.textContent = combined;
-        document.head.appendChild(tag);
-      }
-
-      body.innerHTML = doc.body.innerHTML;
-    })
-    .catch(function(e) {
-      body.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">Failed to load ' + id + '.html from GitHub Pages. Error: ' + e.message + '</p>';
-    });
+  var iframe = document.getElementById("report-iframe");
+  iframe.src = pagesBase + id + ".html";
+  iframe.style.display = "block";
 }
 
 function showReportView(id) {
@@ -622,8 +547,9 @@ function goBack() {
   document.getElementById("report-view").classList.remove("active");
   document.getElementById("main-view").style.display = "";
   document.getElementById("top-navbar").classList.remove("active");
-  var styleEl = document.getElementById("injected-report-styles");
-  if (styleEl) styleEl.remove();
+  var iframe = document.getElementById("report-iframe");
+  iframe.src = "";
+  iframe.style.display = "none";
   document.title = "Blacklist-r";
 }
 
