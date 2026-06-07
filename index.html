@@ -436,7 +436,8 @@ footer {
 
 <script>
 var pageBase = "";
-var ghBase = "https://github.com/Blacklist-r/r/";
+var ghBase = "https://github.com/Blacklist-r/about-us/blob/main/r/";
+var pagesBase = "https://blacklist-r.github.io/about-us/r/";
 
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
@@ -491,7 +492,7 @@ function loadReport(id) {
   body.innerHTML = '<div class="loading-text">Loading...</div>';
   showReportView(id);
 
-  fetch(id + ".html")
+  fetch(pagesBase + id + ".html")
     .then(function(r) {
       if (!r.ok) throw new Error("HTTP " + r.status);
       return r.text();
@@ -518,7 +519,7 @@ function loadReport(id) {
       body.innerHTML = doc.body.innerHTML;
     })
     .catch(function(e) {
-      body.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">Failed to load ' + id + '.html. Make sure it exists in the /r/ folder. Error: ' + e.message + '</p>';
+      body.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">Failed to load ' + id + '.html from GitHub Pages. Error: ' + e.message + '</p>';
     });
 }
 
