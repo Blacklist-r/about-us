@@ -372,6 +372,76 @@ footer {
   line-height: 1.7;
 }
 
+#report-view-body * {
+  max-width: 100%;
+}
+
+#report-view-body .sidebar {
+  display: none !important;
+}
+
+#report-view-body .main-content {
+  margin-left: 0 !important;
+  height: auto !important;
+  max-width: 100%;
+}
+
+#report-view-body .container {
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+#report-view-body header {
+  text-align: center;
+  padding: 0 !important;
+  margin: 0 0 24px 0 !important;
+}
+
+#report-view-body .section {
+  max-width: 100%;
+}
+
+#report-view-body .tabs-container {
+  margin-bottom: 24px;
+}
+
+#report-view-body .tabs-nav {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+#report-view-body .tab-btn {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+#report-view-body footer {
+  margin-top: 24px;
+}
+
+#report-view-body * {
+  max-width: 100%;
+}
+
+#report-view-body .sidebar {
+  display: none !important;
+}
+
+#report-view-body .main-content {
+  margin-left: 0 !important;
+  height: auto !important;
+}
+
+#report-view-body .container {
+  max-width: 100%;
+  padding: 0;
+}
+
+#report-view-body header {
+  text-align: center;
+}
+
 </style>
 <base target="_blank">
 </head>
@@ -410,7 +480,7 @@ footer {
   <div class="section-title">Statistics</div>
   <div class="stats-grid">
     <div class="stat-item"><div class="stat-number">2</div><div class="stat-label">Documented Cases</div></div>
-    <div class="stat-item"><div class="stat-number">12</div><div class="stat-label">Verified Events</div></div>
+    <div class="stat-item"><div class="stat-number" data-stat="evidence">0</div><div class="stat-label">Evidence Held</div></div>
     <div class="stat-item"><div class="stat-number">2</div><div class="stat-label">Active Reports</div></div>
   </div>
 </div>
@@ -533,6 +603,21 @@ function showReportView(id) {
   rv.scrollTop = 0;
 }
 
+function switchTab(event, tabId) {
+  event.preventDefault();
+  var tabs = document.querySelectorAll('.tabs-content');
+  var buttons = document.querySelectorAll('.tab-btn');
+  
+  tabs.forEach(function(tab) { tab.classList.remove('active'); });
+  buttons.forEach(function(btn) { btn.classList.remove('active'); });
+  
+  var targetTab = document.getElementById(tabId);
+  if (targetTab) {
+    targetTab.classList.add('active');
+    event.target.classList.add('active');
+  }
+}
+
 function goBack() {
   document.getElementById("report-view").classList.remove("active");
   document.getElementById("main-view").style.display = "";
@@ -548,6 +633,29 @@ window.addEventListener("popstate", function(e) {
 
 document.addEventListener("DOMContentLoaded", function() {
   render(Object.keys(reports));
+  
+  var totalImages = 0;
+  var reportsToCheck = Object.keys(reports);
+  var checked = 0;
+  
+  reportsToCheck.forEach(function(reportId) {
+    fetch(pagesBase + reportId + ".html")
+      .then(function(r) { return r.ok ? r.text() : ""; })
+      .then(function(html) {
+        var matches = html.match(/data:image\/[a-z]+;base64,/g);
+        if (matches) totalImages += matches.length;
+        checked++;
+        if (checked === reportsToCheck.length) {
+          document.querySelector('[data-stat="evidence"]').textContent = totalImages;
+        }
+      })
+      .catch(function() {
+        checked++;
+        if (checked === reportsToCheck.length) {
+          document.querySelector('[data-stat="evidence"]').textContent = totalImages;
+        }
+      });
+  });
 });
 </script>
 
