@@ -241,6 +241,102 @@ header .subtitle {
   border-radius: 4px;
   background: var(--bg);
 }
+.report-viewer {
+  display: none;
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-height: 400px;
+}
+.report-viewer.active {
+  display: block;
+}
+.report-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.report-viewer-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.report-viewer-close {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: opacity 0.15s;
+}
+.report-viewer-close:hover {
+  opacity: 0.8;
+}
+.report-viewer-content {
+  color: #aaa;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.report-viewer-content h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.report-viewer-content h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 20px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.report-viewer-content p {
+  margin-bottom: 12px;
+}
+.report-viewer-content ul {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+.report-viewer-content li {
+  margin-bottom: 6px;
+}
+.report-viewer-content .evidence-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.report-viewer-content .timeline-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding-left: 12px;
+  border-left: 2px solid var(--accent);
+}
+.report-viewer-content .timeline-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  min-width: 80px;
+  flex-shrink: 0;
+}
+.report-viewer-content .timeline-text {
+  color: #aaa;
+}
 footer {
   text-align: center;
   padding: 32px 0 16px;
@@ -251,12 +347,13 @@ footer {
 }
 </style>
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
 <div class="container">
 
-<<header>
+<header>
   <h1>Blacklist-r</h1>
   <div class="subtitle">
     Cross-server moderation documentation for Discord communities. We track verified safety incidents to protect users across platforms.
@@ -299,7 +396,7 @@ footer {
   <div id="reports-container"></div>
 </div>
 
-<<footer>
+<footer>
   <div>Blacklist-r</div>
   <div style="margin-top: 4px; font-size: 11px;">Cross-server moderation documentation</div>
 </footer>
@@ -310,8 +407,10 @@ footer {
 var reports=["vermoth"];
 var baseUrl="https://blacklist-r.github.io/about-us/";
 function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function render(){var c=document.getElementById("reports-container");c.innerHTML="";reports.forEach(function(r){var n=cap(r),card=document.createElement("div");card.className="report-card";card.innerHTML='<div class="report-header"><div><div class="report-name">'+n+'</div><div class="report-aliases">@'+r+'</div></div><div class="report-id">'+r+'</div></div><div class="report-desc">Click "View Full Report" to load details.</div><div class="report-actions"><button class="report-btn btn-view" onclick="toggleReport(\''+r+'\')">View Full Report</button></div><div class="report-sources"><div class="source-label">Sources</div><div class="source-links"><a href="https://github.com/Blacklist-r/'+r+'" class="source-link"><span class="source-icon">GH</span>GitHub</a></div></div><div class="embedded-report" id="report-'+r+'"><iframe src="'+baseUrl+r+'.html" title="'+n+' Report"></iframe></div></div>';c.appendChild(card)})}
-function toggleReport(id){var el=document.getElementById("report-"+id),btn=event.target;el.classList.contains("active")?(el.classList.remove("active"),btn.textContent="View Full Report"):(el.classList.add("active"),btn.textContent="Hide Report")}
+function render(){var c=document.getElementById("reports-container");c.innerHTML="";reports.forEach(function(r){var n=cap(r),card=document.createElement("div");card.className="report-card";card.innerHTML='<div class="report-header"><div><div class="report-name">'+n+'</div><div class="report-aliases">@'+r+'</div></div><div class="report-id">'+r+'</div></div><div class="report-desc">Click "View Full Report" to load details.</div><div class="report-actions"><button class="report-btn btn-view" onclick="loadReport(''+r+'')">View Full Report</button></div><div class="report-sources"><div class="source-label">Sources</div><div class="source-links"><a href="https://github.com/Blacklist-r/'+r+'" class="source-link"><span class="source-icon">GH</span>GitHub</a></div></div><div class="report-viewer" id="viewer-'+r+'"><div class="report-viewer-header"><div class="report-viewer-title">'+n+' Report</div><button class="report-viewer-close" onclick="closeReport(''+r+'')">Close</button></div><div class="report-viewer-content" id="content-'+r+'">Loading...</div></div></div>';c.appendChild(card)})}
+function loadReport(id){var viewer=document.getElementById("viewer-"+id),content=document.getElementById("content-"+id);viewer.classList.add("active");content.innerHTML="Loading...";fetch(baseUrl+id+".html").then(function(r){return r.text()}).then(function(html){var parser=new DOMParser(),doc=parser.parseFromString(html,"text/html"),body=doc.body.innerHTML;content.innerHTML=body;history.pushState({report:id},"","/about-us/r/"+id)}).catch(function(e){content.innerHTML="<p>Failed to load report.</p>"})}
+function closeReport(id){document.getElementById("viewer-"+id).classList.remove("active");history.pushState({},"","/about-us/")}
+window.addEventListener("popstate",function(e){if(e.state&&e.state.report){loadReport(e.state.report)}else{reports.forEach(function(r){document.getElementById("viewer-"+r).classList.remove("active")})}});
 document.addEventListener("DOMContentLoaded",render);
 </script>
 
