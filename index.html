@@ -215,7 +215,6 @@ footer {
   border-top: 1px solid var(--border);
   margin-top: 8px;
 }
-
 #report-view {
   display: none;
   position: fixed;
@@ -400,13 +399,16 @@ function loadReport(id) {
         var row = document.getElementById("sources-" + id);
         if (row) {
           row.querySelectorAll("[data-auto-gdoc]").forEach(function(el) { el.remove(); });
-          gdocLinks.forEach(function(url, i) {
+          var existing = [];
+          row.querySelectorAll("a[href]").forEach(function(a) { existing.push(a.href); });
+          var filtered = gdocLinks.filter(function(url) { return existing.indexOf(url) === -1; });
+          filtered.forEach(function(url, i) {
             var a = document.createElement("a");
             a.href = url;
             a.target = "_blank";
             a.className = "source-link";
             a.setAttribute("data-auto-gdoc", "1");
-            a.innerHTML = SVG.google + "Google Doc" + (gdocLinks.length > 1 ? " " + (i + 1) : "");
+            a.innerHTML = SVG.google + "Google Doc" + (filtered.length > 1 ? " " + (i + 1) : "");
             row.appendChild(a);
           });
         }
