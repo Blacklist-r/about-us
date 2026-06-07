@@ -86,9 +86,7 @@ header .subtitle {
   font-size: 15px;
   line-height: 1.8;
 }
-.about-text p + p {
-  margin-top: 12px;
-}
+.about-text p + p { margin-top: 12px; }
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -124,9 +122,7 @@ header .subtitle {
   padding: 20px;
   margin-bottom: 16px;
 }
-.report-card:last-child {
-  margin-bottom: 0;
-}
+.report-card:last-child { margin-bottom: 0; }
 .report-header {
   display: flex;
   align-items: flex-start;
@@ -173,11 +169,10 @@ header .subtitle {
   text-decoration: none;
   border: 1px solid;
   cursor: pointer;
+  background: transparent;
   transition: opacity 0.15s;
 }
-.report-btn:hover {
-  opacity: 0.8;
-}
+.report-btn:hover { opacity: 0.8; }
 .btn-view {
   color: var(--accent-blue);
   background: rgba(93, 173, 226, 0.05);
@@ -218,9 +213,7 @@ header .subtitle {
   border: 1px solid var(--border);
   transition: opacity 0.15s;
 }
-.source-link:hover {
-  opacity: 0.8;
-}
+.source-link:hover { opacity: 0.8; }
 .source-icon {
   font-size: 10px;
   font-weight: 700;
@@ -234,9 +227,7 @@ header .subtitle {
   border-radius: 6px;
   min-height: 400px;
 }
-.report-viewer.active {
-  display: block;
-}
+.report-viewer.active { display: block; }
 .report-viewer-header {
   display: flex;
   align-items: center;
@@ -261,9 +252,7 @@ header .subtitle {
   color: var(--text-muted);
   transition: opacity 0.15s;
 }
-.report-viewer-close:hover {
-  opacity: 0.8;
-}
+.report-viewer-close:hover { opacity: 0.8; }
 .report-viewer-content {
   color: #aaa;
   font-size: 14px;
@@ -284,16 +273,12 @@ header .subtitle {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-.report-viewer-content p {
-  margin-bottom: 12px;
-}
+.report-viewer-content p { margin-bottom: 12px; }
 .report-viewer-content ul {
   margin-left: 20px;
   margin-bottom: 12px;
 }
-.report-viewer-content li {
-  margin-bottom: 6px;
-}
+.report-viewer-content li { margin-bottom: 6px; }
 .report-viewer-content .evidence-box {
   background: rgba(255,255,255,0.02);
   border: 1px solid var(--border);
@@ -318,9 +303,7 @@ header .subtitle {
   min-width: 80px;
   flex-shrink: 0;
 }
-.report-viewer-content .timeline-text {
-  color: #aaa;
-}
+.report-viewer-content .timeline-text { color: #aaa; }
 .loading-text {
   color: var(--text-muted);
   font-size: 14px;
@@ -336,8 +319,6 @@ footer {
   margin-top: 8px;
 }
 </style>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
@@ -345,9 +326,7 @@ footer {
 
 <header>
   <h1>Blacklist-r</h1>
-  <div class="subtitle">
-    Cross-server moderation documentation for Discord communities. We track verified safety incidents to protect users across platforms.
-  </div>
+  <div class="subtitle">Cross-server moderation documentation for Discord communities. We track verified safety incidents to protect users across platforms.</div>
   <div style="margin-top: 16px;">
     <span class="badge badge-red">Community Safety</span>
     <span class="badge badge-red">Moderation</span>
@@ -394,16 +373,67 @@ footer {
 </div>
 
 <script>
-var apiUrl="https://api.github.com/repos/Blacklist-r/about-us/contents/r";
-var pageBase="https://blacklist-r.github.io/about-us/r/";
-var ghBase="https://github.com/Blacklist-r/about-us/tree/main/r/";
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
-function render(reports){var c=document.getElementById("reports-container");c.innerHTML="";if(reports.length===0){c.innerHTML='<div class="loading-text">No reports found.</div>';return}reports.forEach(function(r){var n=cap(r),card=document.createElement("div");card.className="report-card";card.innerHTML='<div class="report-header"><div><div class="report-name">'+n+'</div><div class="report-aliases">@'+r+'</div></div><div class="report-id">'+r+'</div></div><div class="report-desc">Click "View Full Report" to load details.</div><div class="report-actions"><button class="report-btn btn-view" onclick="loadReport(''+r+'')">View Full Report</button><a href="'+pageBase+r+'.html" class="report-btn btn-source">Open in New Tab</a></div><div class="report-sources"><div class="source-label">Sources</div><div class="source-links"><a href="'+ghBase+r+'" class="source-link"><span class="source-icon">GH</span>GitHub</a></div></div><div class="report-viewer" id="viewer-'+r+'"><div class="report-viewer-header"><div class="report-viewer-title">'+n+' Report</div><button class="report-viewer-close" onclick="closeReport(''+r+'')">Close</button></div><div class="report-viewer-content" id="content-'+r+'">Loading...</div></div></div>';c.appendChild(card)})}
-function loadReport(id){var viewer=document.getElementById("viewer-"+id),content=document.getElementById("content-"+id);viewer.classList.add("active");content.innerHTML="Loading...";fetch(pageBase+id+".html").then(function(r){return r.text()}).then(function(html){var parser=new DOMParser(),doc=parser.parseFromString(html,"text/html"),body=doc.body.innerHTML;content.innerHTML=body;history.pushState({report:id},"","/about-us/r/"+id)}).catch(function(e){content.innerHTML="<p>Failed to load report. <a href='"+pageBase+id+".html' target='_blank'>Open directly</a></p>"})}
-function closeReport(id){document.getElementById("viewer-"+id).classList.remove("active");history.pushState({},"","/about-us/")}
-window.addEventListener("popstate",function(e){if(e.state&&e.state.report){loadReport(e.state.report)}else{var viewers=document.querySelectorAll(".report-viewer");viewers.forEach(function(v){v.classList.remove("active")})}});
-function init(){fetch(apiUrl).then(function(r){return r.json()}).then(function(data){if(!Array.isArray(data))throw new Error("Invalid");var reports=data.filter(function(f){return f.name&&f.name.endsWith(".html")}).map(function(f){return f.name.replace(".html","")});render(reports)}).catch(function(e){render(["vermoth"])})}
-document.addEventListener("DOMContentLoaded",init);
+var apiUrl = "https://api.github.com/repos/Blacklist-r/about-us/contents/r";
+var pageBase = "https://blacklist-r.github.io/about-us/r/";
+var ghBase = "https://github.com/Blacklist-r/about-us/tree/main/r/";
+
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+function render(reports) {
+  var c = document.getElementById("reports-container");
+  c.innerHTML = "";
+  if (!reports.length) {
+    c.innerHTML = '<div class="loading-text">No reports found.</div>';
+    return;
+  }
+  reports.forEach(function(r) {
+    var n = cap(r);
+    var card = document.createElement("div");
+    card.className = "report-card";
+    card.innerHTML =
+      '<div class="report-header">' +
+        '<div>' +
+          '<div class="report-name">' + n + '</div>' +
+          '<div class="report-aliases">@' + r + '</div>' +
+        '</div>' +
+        '<div class="report-id">' + r + '</div>' +
+      '</div>' +
+      '<div class="report-desc">Click "View Full Report" to load details.</div>' +
+      '<div class="report-actions">' +
+        '<a href="' + pageBase + r + '.html" target="_blank" class="report-btn btn-view">View Full Report</a>' +
+      '</div>' +
+      '<div class="report-sources">' +
+        '<div class="source-label">Sources</div>' +
+        '<div class="source-links">' +
+          '<a href="' + ghBase + r + '" target="_blank" class="source-link"><span class="source-icon">GH</span>GitHub</a>' +
+        '</div>' +
+      '</div>' +
+      '';
+    c.appendChild(card);
+  });
+}
+
+
+function init() {
+  fetch(apiUrl)
+    .then(function(r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!Array.isArray(data)) throw new Error("not array");
+      var reports = data
+        .filter(function(f) { return f.name && f.name.endsWith(".html"); })
+        .map(function(f) { return f.name.replace(".html", ""); });
+      if (!reports.length) throw new Error("empty");
+      render(reports);
+    })
+    .catch(function() {
+      render(["vermoth"]);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", init);
 </script>
 
 </body>
