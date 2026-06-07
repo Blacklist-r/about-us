@@ -388,34 +388,7 @@ function loadReport(id) {
 
       body.innerHTML = doc.body.innerHTML;
 
-      var seen = {};
-      var gdocLinks = [];
-      doc.querySelectorAll("a[href]").forEach(function(a) {
-        var href = a.getAttribute("href") || "";
-        if (href.indexOf("docs.google.com") !== -1 && !seen[href]) {
-          seen[href] = true;
-          gdocLinks.push(href);
-        }
-      });
-      if (gdocLinks.length) {
-        var row = document.getElementById("sources-" + id);
-        if (row) {
-          row.querySelectorAll("[data-auto-gdoc]").forEach(function(el) { el.remove(); });
-          var existing = [];
-          row.querySelectorAll("a[href]").forEach(function(a) { existing.push(a.href); });
-          var filtered = gdocLinks.filter(function(url) { return existing.indexOf(url) === -1; });
-          filtered.forEach(function(url, i) {
-            var a = document.createElement("a");
-            a.href = url;
-            a.target = "_blank";
-            a.className = "source-link";
-            a.setAttribute("data-auto-gdoc", "1");
-            a.innerHTML = SVG.google + "Google Doc" + (filtered.length > 1 ? " " + (i + 1) : "");
-            row.appendChild(a);
-          });
-        }
-      }
-    })
+)
     .catch(function() {
       body.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">Failed to load report.</p>';
     });
