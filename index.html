@@ -387,8 +387,7 @@ function loadReport(id) {
       }
 
       body.innerHTML = doc.body.innerHTML;
-
-)
+    })
     .catch(function() {
       body.innerHTML = '<p style="color:var(--text-muted);padding:20px 0;">Failed to load report.</p>';
     });
